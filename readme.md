@@ -26,3 +26,12 @@ Result:
 Result:
 ![Actor-Critic-algoritms](./data/actor-critic_algorithms.png)
 
+
+## Trained Agent 
+<!-- blank line -->
+<figure class="video_container">
+  <video controls="false" allowfullscreen="true">
+    <source src="data/test_video_ddqn.mp4" type="video/mp4">
+  </video>
+</figure>
+<!-- blank line -->
