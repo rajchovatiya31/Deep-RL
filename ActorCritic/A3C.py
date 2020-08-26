@@ -157,12 +157,12 @@ class A3C:
                     if i_episode % 100 == 0:
                         print("\r Episode {}/{} Average Score:{}".format(i_episode, self.episodes, np.mean(scores_avg)))
                 if i_episode % save_every == 0:
-                    torch.save(local_policy_network.state_dict(), f"./PolicyGradient/checkpoint/A3C/{self.env_name}-pytorch-{i_episode}-{rank+1}.pth")
-            torch.save(local_policy_network.state_dict(), f"./PolicyGradient/checkpoint/A3C/{self.env_name}-pytorch-{i_episode}-{rank+1}.pth")
-            torch.save(self.shared_policy_network.state_dict(), f"./PolicyGradient/checkpoint/A3C/shared-{i_episode}.pth")
+                    torch.save(local_policy_network.state_dict(), f"./checkpoint/A3C/{self.env_name}-pytorch-{i_episode}-{rank+1}.pth")
+            torch.save(local_policy_network.state_dict(), f"./checkpoint/A3C/{self.env_name}-pytorch-{i_episode}-{rank+1}.pth")
+            torch.save(self.shared_policy_network.state_dict(), f"./checkpoint/A3C/shared-{i_episode}.pth")
         except KeyboardInterrupt:
-            torch.save(local_policy_network.state_dict(), f"./PolicyGradient/checkpoint/A3C/{self.env_name}-pytorch-{i_episode}-{rank+1}.pth")
-            torch.save(self.shared_policy_network.state_dict(), f"./PolicyGradient/checkpoint/A3C/shared-{i_episode}.pth")    
+            torch.save(local_policy_network.state_dict(), f"./checkpoint/A3C/{self.env_name}-pytorch-{i_episode}-{rank+1}.pth")
+            torch.save(self.shared_policy_network.state_dict(), f"./checkpoint/A3C/shared-{i_episode}.pth")    
 
 
     def run(self):

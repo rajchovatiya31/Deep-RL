@@ -19,7 +19,8 @@ class DDQNagent:
             env(gym env): openai gym environment
             episodes(int): number of episodes to train
             t_max(int): maximum time to run environment in each episode
-            buffer_size(int): number of elements to store in replay buffer
+            buffer_size(int): maximum number of elements to store in replay buffer
+            batch_size(int): batch size for training
             device(torch.device): device on which to train an agent as torch.device
         """
         self.env = env
@@ -170,9 +171,9 @@ class DDQNagent:
                     score += reward
                     if done:
                         break
+                scores_window.append(score)
                 wandb.log({'Epsilon': self.epsilon, 'Scores': score})
                 self.epsilon = max(self.epsilon * self.epsilon_decay, self.epsilon_min)
-                scores_window.append(score)
                 print("\r Episode {}/{} Average Score:{}".format(i_episode, self.episodes, np.mean(scores_window)), end="")
                 if i_episode % 100 == 0:
                     print("\r Episode {}/{} Average Score:{}".format(i_episode, self.episodes, np.mean(scores_window)))

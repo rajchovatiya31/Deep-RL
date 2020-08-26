@@ -1,6 +1,6 @@
 # Deep Reinforcement Learning
 
-This repo contains algoritms of deep RL 
+This repo contains algoritms of deep RL.
 
 ## Algorithms:
 
@@ -22,16 +22,19 @@ Result:
 
 ### Actor-Critic Methods
     1. Asynchronous Advantage Actor-Critic (A3C)
-    2. Generalize Adavantage Estimation
+    2. Generalize Adavantage Estimation (GAE)
+    3. Deep Deterministic Policy Gradient (DDPG)
+
 Result:
 ![Actor-Critic-algoritms](./data/actor-critic_algorithms.png)
 
+DDPG:
+![DDPG-Result](./data/ddpg.png)
 
-## Trained Agent 
-<!-- blank line -->
-<figure class="video_container">
-  <video controls="false" allowfullscreen="true">
-    <source src="data/test_video_ddqn.mp4" type="video/mp4">
-  </video>
-</figure>
-<!-- blank line -->
+### Videos:
+Trained agent's demo videos can be found in folder `data`
+
+### Problems:
+- There is problem with A2C agent. It does not work in Windows. And also there is some error in trainig loop.
+
+- A3C agent can not terminate loop it self after training completed due to multiprocessing. Program must be terminated manually.
