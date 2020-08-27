@@ -204,4 +204,39 @@ class DDPGValueNet(nn.Module):
         return self.out_layer(X)
     
 
-            
+class TwinDDPG(nn.Module):
+    def __init__(self, input_dim, output_dim, hidden_dim=(128, 64)):
+        super().__init__()
+        self.in_layer_a = nn.Linear(input_dim + output_dim, hidden_dim[0])
+        self.in_layer_b = nn.Linear(input_dim + output_dim, hidden_dim[0])
+
+        self.hidden_list_a = nn.ModuleList()
+        self.hidden_list_b = nn.ModuleList()
+
+        for i in range(len(hidden_dim) - 1):
+            layer_a = nn.Linear(hidden_dim[i], hidden_dim[i+1])
+            self.hidden_list_a.append(layer_a)
+            layer_b = nn.Linear(hidden_dim[i], hidden_dim[i+1])
+            self.hidden_list_b.append(layer_b)
+
+        self.out_layer_a = nn.Linear(hidden_dim[-1], output_dim)
+        self.out_layer_b = nn.Linear(hidden_dim[-1], output_dim)
+
+    def forward(self, X, a):
+        X = torch.cat((X, a), dim=1)
+
+        Xa = nn.functional.relu(self.in_layer_a(X))
+        Xb = nn.functional.relu(self.in_layer_b(X))
+
+        for layer_a, layer_b in zip(self.hidden_list_a, self.hidden_list_b):
+            Xa = nn.functional.relu(layer_a(Xa))
+            Xb = nn.functional.relu(layer_b(Xb))
+
+        return self.out_layer_a(Xa), self.out_layer_b(Xb)
+
+    def forward_Q(self, X, a):
+        X = torch.cat((X,a), dim=1)
+        Xa = nn.functional.relu(self.in_layer_a(X))
+        for layer in self.hidden_list_a:
+            Xa = nn.functional.relu(layer(Xa))
+        return self.out_layer_a(Xa)       

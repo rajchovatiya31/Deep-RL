@@ -23,16 +23,17 @@ Result:
 ### Actor-Critic Methods
     1. Asynchronous Advantage Actor-Critic (A3C)
     2. Generalize Adavantage Estimation (GAE)
-    3. Deep Deterministic Policy Gradient (DDPG)
 
-Result:
 ![Actor-Critic-algoritms](./data/actor-critic_algorithms.png)
 
-DDPG:
+    3. Deep Deterministic Policy Gradient (DDPG)
 ![DDPG-Result](./data/ddpg.png)
 
+    4. Twin-Delayed DDPG (TD3)
+![TD3-Result](./data/TD3.png)
+
 ### Videos:
-Trained agent's demo videos can be found in folder `data`
+Trained agent's demo videos can be found in folder `./data`
 
 ### Problems:
 - There is problem with A2C agent. It does not work in Windows. And also there is some error in trainig loop.
