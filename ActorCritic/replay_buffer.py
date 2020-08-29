@@ -2,6 +2,7 @@ import random
 from collections import deque, namedtuple
 import numpy as np
 
+
 class ReplayBuffer:
     def __init__(self, buffer_size, batch_size):
         """Simple replay buffer with deque
@@ -13,12 +14,14 @@ class ReplayBuffer:
         self.buffer_size = buffer_size
         self.batch_size = batch_size
         self.buffer = deque(maxlen=buffer_size)
-        self.experience = namedtuple('Experience', ['state', 'action', 'reward', 'next_state', 'done'])
-    
+        self.experience = namedtuple(
+            'Experience', ['state', 'action', 'reward', 'next_state', 'done'])
+
     def add(self, state, action, reward, next_state, done):
         """Add a sample to buffer
         """
-        self.buffer.append(self.experience(state, action, reward, next_state, done))
+        self.buffer.append(self.experience(
+            state, action, reward, next_state, done))
 
     def sample(self):
         """Sample a batch from buffer
@@ -28,14 +31,19 @@ class ReplayBuffer:
         """
         experiences = random.sample(self.buffer, self.batch_size)
 
-        states = np.vstack([i.state for i in experiences if experiences is not None])
-        actions = np.vstack([i.action for i in experiences if experiences is not None])
-        rewards = np.vstack([i.reward for i in experiences if experiences is not None])
-        next_states = np.vstack([i.next_state for i in experiences if experiences is not None])
-        dones = np.vstack([i.done for i in experiences if experiences is not None])
+        states = np.vstack(
+            [i.state for i in experiences if experiences is not None])
+        actions = np.vstack(
+            [i.action for i in experiences if experiences is not None])
+        rewards = np.vstack(
+            [i.reward for i in experiences if experiences is not None])
+        next_states = np.vstack(
+            [i.next_state for i in experiences if experiences is not None])
+        dones = np.vstack(
+            [i.done for i in experiences if experiences is not None])
 
         return (states, actions, rewards, next_states, dones)
-    
+
     def __len__(self):
         return len(self.buffer)
 
@@ -58,7 +66,7 @@ class ReplayBufferEff:
         self.reward_memory = np.empty(buffer_size, dtype=np.ndarray)
         self.next_state_memory = np.empty(buffer_size, dtype=np.ndarray)
         self.done_memory = np.empty(buffer_size, dtype=np.ndarray)
-    
+
     def add(self, state, action, reward, next_state, done):
         """Add a sample to buffer
         """
@@ -73,14 +81,15 @@ class ReplayBufferEff:
 
         self.size += 1
         self.size = min(self.buffer_size, self.size)
-    
+
     def sample(self):
         """Sample a batch
 
         Returns:
             tuple: tuple of ndarray size of (batch_size, )
         """
-        experience_idx = np.random.choice(self.size, self.batch_size, replace=False)
+        experience_idx = np.random.choice(
+            self.size, self.batch_size, replace=False)
 
         states = np.vstack(self.state_memory[experience_idx])
         actions = np.vstack(self.action_memory[experience_idx])
@@ -89,9 +98,10 @@ class ReplayBufferEff:
         dones = np.vstack(self.done_memory[experience_idx])
 
         return (states, actions, rewards, next_states, dones)
-    
+
     def __len__(self):
         return self.size
+
 
 class PrioritizedReplay:
     def __init__(self, buffer_size, batch_size, alpha=0.6, beta=0.1, seed=0):
@@ -118,8 +128,8 @@ class PrioritizedReplay:
         self.idx = 0
         self.n_entries = 0
         self.next_idx = 0
-        
-        self.priority_idx = 0  # idx to store priority in buffer 
+
+        self.priority_idx = 0  # idx to store priority in buffer
         self.sample_idx = 1    # idx to store sample in buffer
 
         self.new_added_priority_idx = 0
@@ -137,14 +147,13 @@ class PrioritizedReplay:
         priority = 1.0
         if self.n_entries > 0:
             priority = self.buffer[:self.n_entries, self.priority_idx].max()
-        
+
         self.buffer[self.next_idx, self.priority_idx] = priority
         self.buffer[self.next_idx, self.sample_idx] = experience
 
         self.n_entries = min(self.n_entries + 1, self.buffer_size)
         self.next_idx = (self.next_idx + 1) % self.buffer_size
-            
-        
+
     def update_priorities(self, priorities, idxs):
         """update new priorities current buffer
 
@@ -153,7 +162,7 @@ class PrioritizedReplay:
             idxs (ndarray): indexes of priorities to place in buffer
         """
         self.buffer[idxs, self.priority_idx] = np.abs(priorities)
-    
+
     def sample(self):
         """sample a batch
 
@@ -170,20 +179,24 @@ class PrioritizedReplay:
         weights = (self.n_entries * probs) ** -self.beta
         normalized_weights = weights / weights.max()
 
-        exp_idxs = np.random.choice(self.n_entries, size=self.batch_size, replace=False, p=probs)
+        exp_idxs = np.random.choice(
+            self.n_entries, size=self.batch_size, replace=False, p=probs)
         experiences = np.array([enteries[idx] for idx in exp_idxs])
 
         exp_idxs = np.vstack(exp_idxs)
         weights = np.vstack(normalized_weights[exp_idxs])
-        states = np.vstack([experiences[i, self.sample_idx][0] for i in range(len(experiences))])
-        actions = np.vstack([experiences[i, self.sample_idx][1] for i in range(len(experiences))])
-        rewards = np.vstack([experiences[i, self.sample_idx][2] for i in range(len(experiences))])
-        next_states = np.vstack([experiences[i, self.sample_idx][3] for i in range(len(experiences))])
-        dones = np.vstack([experiences[i, self.sample_idx][4] for i in range(len(experiences))])
-    
+        states = np.vstack([experiences[i, self.sample_idx][0]
+                            for i in range(len(experiences))])
+        actions = np.vstack([experiences[i, self.sample_idx][1]
+                             for i in range(len(experiences))])
+        rewards = np.vstack([experiences[i, self.sample_idx][2]
+                             for i in range(len(experiences))])
+        next_states = np.vstack([experiences[i, self.sample_idx][3]
+                                 for i in range(len(experiences))])
+        dones = np.vstack([experiences[i, self.sample_idx][4]
+                           for i in range(len(experiences))])
+
         return (exp_idxs, weights, states, actions, rewards, next_states, dones)
-    
+
     def __len__(self):
         return self.n_entries
-
-

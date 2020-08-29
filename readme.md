@@ -39,3 +39,5 @@ Trained agent's demo videos can be found in folder `./data`
 - There is problem with A2C agent. It does not work in Windows. And also there is some error in trainig loop.
 
 - A3C agent can not terminate loop it self after training completed due to multiprocessing. Program must be terminated manually.
+
+- SAC algorithm not working due to pytorch inpalace operation error.

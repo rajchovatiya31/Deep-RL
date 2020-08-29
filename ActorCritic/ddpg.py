@@ -7,47 +7,7 @@ from gym.wrappers import Monitor
 from model import DDPGPolicyNet, DDPGValueNet
 from replay_buffer import ReplayBufferEff
 from collections import deque
-
-
-class GreedyStrategy:
-    def __init__(self, bounds):
-        """Greedy strategy
-
-        Args:
-            bounds (tuple): bound of action
-        """
-        self.low, self.high = bounds
-
-    def select_action(self, model, state):
-        state = torch.from_numpy(state).float().unsqueeze(0)
-        with torch.no_grad():
-            greedy_action = model(state).cpu().detach().data.numpy().squeeze()
-        action = np.clip(greedy_action, self.low, self.high)
-        return np.reshape(action, self.high.shape)
-
-
-class NormalNoiseStrategy:
-    def __init__(self, bounds, exploration_noise_rate=0.1):
-        self.low, self.high = bounds
-        self.noise_rate = exploration_noise_rate
-
-    def select_action(self, model, state, max_exploration):
-        state = torch.from_numpy(state).float().unsqueeze(0)
-
-        if max_exploration:
-            noise_scale = self.high
-        else:
-            noise_scale = self.noise_rate * self.high
-
-        with torch.no_grad():
-            greedy_action = model(state).cpu().detach().data.numpy().squeeze()
-
-        noise = np.random.normal(loc=0, scale=noise_scale, size=len(self.high))
-        action_noisy = greedy_action + noise
-        action = np.clip(action_noisy, self.low, self.high)
-
-        return action
-
+from strategies import GreedyStrategy, NormalNoiseStrategy
 
 class DDPG:
     def __init__(self, env, episodes=2000, t_max=2000, buffer_len=100000, batch_size=256):
